@@ -52,9 +52,13 @@ public class ProductProjection {
 
     @QueryHandler
     //@TrackTimeUtil
-    public Product handle(ProductRequest query) {
+    public Product handle(ProductRequest query){
         log.debug("Handling Product Request query: {}", query);
-        return this.repository.findByProductId(query.getProductId());
+        Product product  = repository.findByProductId(query.getProductId());
+        /*if(product == null){
+            throw new ProductException(String.format("Product %s does not exists",query.getProductId()));
+        }*/
+        return product;
     }
 
 }

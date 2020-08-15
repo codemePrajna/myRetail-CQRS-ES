@@ -6,6 +6,7 @@ import com.myRetail.commands.ProductCreateCommand;
 import com.myRetail.commands.ProductUpdateCommand;
 import com.myRetail.events.ProductCreateEvent;
 import com.myRetail.events.ProductUpdateEvent;
+import com.myRetail.exception.ProductException;
 import com.myRetail.util.ProductEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.awt.print.PrinterException;
 import java.util.UUID;
 
 
@@ -58,12 +60,12 @@ public class ProductAggregate {
         AggregateLifecycle.apply(new ProductUpdateEvent(productUpdateCommand.getProductId(),productUpdateCommand.getPrice()));
     }
     @EventSourcingHandler
-    protected void on(ProductUpdateEvent productUpdateEvent){
-       // this.id = productUpdateEvent.id;
+    protected void on(ProductUpdateEvent productUpdateEvent) throws ProductException {
+       if(this.productId == null) {
+           throw new ProductException("Product you are trying to update do not exists");
+       }
         this.productId = productUpdateEvent.getProductId();
         this.price = productUpdateEvent.getPrice();
-        //this.status = String.valueOf(ProductEnum.CREATED);
-        //AggregateLifecycle.apply(new ProductUpdateEvent(this.id, ProductEnum.STARTED));
     }
 
 }
