@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests() // allow requests
-                .antMatchers("/swagger-ui.html","/h2-console")
+                .antMatchers("/swagger-ui.html", "/h2-console")
                 .permitAll()
                 .antMatchers("/api/v1/**")
                 .authenticated()

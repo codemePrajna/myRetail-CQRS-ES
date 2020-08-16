@@ -1,10 +1,9 @@
 package com.myRetail.controller;
 
 import com.myRetail.dto.ProductDto;
-import com.myRetail.entity.Product;
+import com.myRetail.exception.ProductException;
 import com.myRetail.response.Response;
 import com.myRetail.service.impl.ProductFetchServiceImpl;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONException;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -40,7 +38,7 @@ public class ProductFetchController {
      */
     @GetMapping("/{productId}")
     @ApiOperation(value = "Fetch product Details for a given Product")
-    public ResponseEntity<Response<ProductDto>> fetchProduct(@PathVariable(value = "productId") String productId) throws InterruptedException, ExecutionException, JSONException {
+    public ResponseEntity<Response<ProductDto>> fetchProduct(@PathVariable(value = "productId") String productId) throws InterruptedException, ExecutionException, JSONException, ProductException {
 
         return new Response<ProductDto>()
                 .setStatus(200)
@@ -49,6 +47,7 @@ public class ProductFetchController {
 
     /**
      * List product Details Event sequence for a given Product
+     *
      * @param productId
      * @return
      */

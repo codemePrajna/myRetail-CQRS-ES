@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
-
 @RunWith(SpringRunner.class)
 public class ProductCommandDispatchTest {
     private FixtureConfiguration<ProductAggregate> fixture;
@@ -30,7 +28,7 @@ public class ProductCommandDispatchTest {
     }
 
     @Test
-    public void dispatch_productCreateCommand(){
+    public void dispatch_productCreateCommand() {
         fixture.givenNoPriorActivity()
                 .when(new ProductCreateCommand(
                         productId,
@@ -45,8 +43,11 @@ public class ProductCommandDispatchTest {
     }
 
     @Test
-    public void dispatch_productUpdateCommand(){
-        fixture.givenNoPriorActivity()
+    public void dispatch_productUpdateCommand() {
+        fixture.given(new ProductCreateEvent(
+                productId,
+                price,
+                currency))
                 .when(new ProductUpdateCommand(
                         productId,
                         price)

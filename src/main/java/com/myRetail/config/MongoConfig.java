@@ -4,14 +4,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import java.io.IOException;
 
 //@Configuration
 public class MongoConfig extends AbstractMongoConfiguration {
@@ -19,6 +13,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
     public String getDatabaseName() {
         return "retailDb";
     }
+
     @Override
     @Bean
     public MongoClient mongoClient() {

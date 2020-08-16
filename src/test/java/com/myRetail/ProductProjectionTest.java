@@ -2,7 +2,6 @@ package com.myRetail;
 
 import com.myRetail.entity.Product;
 import com.myRetail.entity.ProductRequest;
-import com.myRetail.exception.ProductException;
 import com.myRetail.projection.ProductProjection;
 import com.myRetail.repository.ProductRepository;
 import org.junit.Assert;
@@ -13,9 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RunWith(SpringRunner.class)
 public class ProductProjectionTest {
@@ -38,7 +34,7 @@ public class ProductProjectionTest {
     }
 
     @Test
-    public void product_projection_test(){
+    public void product_projection_test() {
         ProductRequest productRequest = new ProductRequest("12345");
         Mockito.when(repository.findByProductId(productId)).thenReturn(product);
         Assert.assertEquals(product, productProjection.handle(productRequest));

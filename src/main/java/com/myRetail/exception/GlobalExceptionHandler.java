@@ -22,11 +22,12 @@ public class GlobalExceptionHandler {
             put(RuntimeException.class.getName(), HttpStatus.INTERNAL_SERVER_ERROR);
             put(Exception.class.getName(), HttpStatus.INTERNAL_SERVER_ERROR);
             put(HttpStatusCodeException.class.getName(), HttpStatus.INTERNAL_SERVER_ERROR);
+            put(ProductException.class.getName(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     };
 
-    @ExceptionHandler(ProductException.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> globalExceptionHandler(Exception ex, WebRequest request) throws Exception {
         HttpStatus status = this.exceptionToResponseMap.get(ex.getClass().getName());
         if (status == null) {

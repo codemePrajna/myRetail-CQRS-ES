@@ -3,22 +3,17 @@ package com.myRetail.service.impl;
 import com.myRetail.dto.ProductDto;
 import com.myRetail.entity.Product;
 import com.myRetail.entity.ProductRequest;
+import com.myRetail.exception.ProductException;
 import com.myRetail.service.ProductFetchService;
-import com.myRetail.util.ProductUtil;
-//import com.myRetail.util.TrackTimeUtil;
-//import com.myRetail.util.TrackTimeUtil;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.Message;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,19 +28,18 @@ import java.util.stream.Collectors;
 public class ProductFetchServiceImpl implements ProductFetchService {
     private final QueryGateway queryGateway;
     private final EventStore eventStore;
-
-    public ProductFetchServiceImpl(QueryGateway queryGateway,EventStore eventStore){
-        this.queryGateway = queryGateway;
-        this.eventStore = eventStore;
-    }
-
     @Autowired
     RestTemplate restTemplate;
     @Value("${target.product.url}")
     String targetUrl;
+    public ProductFetchServiceImpl(QueryGateway queryGateway, EventStore eventStore) {
+        this.queryGateway = queryGateway;
+        this.eventStore = eventStore;
+    }
 
     /**
      * Function that consolidates the product information from repo and event to construct a complete requested information of a product
+     *
      * @param productId
      * @return
      * @throws ExecutionException
@@ -53,24 +47,28 @@ public class ProductFetchServiceImpl implements ProductFetchService {
      * @throws JSONException
      */
     @Override
-   // @TrackTimeUtil
-    public ProductDto findByProductId(String productId) throws ExecutionException, InterruptedException, JSONException {
+    // @TrackTimeUtil
+    public ProductDto findByProductId(String productId) throws ExecutionException, InterruptedException, JSONException, ProductException {
         CompletableFuture<Product> productCf = this.queryGateway.query(
                 new ProductRequest(productId),
                 ResponseTypes.instanceOf(Product.class)
         );
 
         Product product = productCf.get();
+        if (product == null) {
+            throw new ProductException(String.format("Product %s does not exists", productId));
+        }
         return constructProduct(product);
 
     }
 
     /**
      * List the sequence of event on the product update/create
+     *
      * @param productId
      * @return
      */
-   // @TrackTimeUtil
+    // @TrackTimeUtil
     public List<Object> listEventsForProduct(String productId) {
         return this.eventStore
                 .readEvents(productId)
@@ -93,6 +91,7 @@ public class ProductFetchServiceImpl implements ProductFetchService {
         }*/
         return productName;
     }
+
     private String getTargetURL(String productId) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(targetUrl + productId);
         return uriComponentsBuilder.toUriString();
