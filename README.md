@@ -19,53 +19,26 @@ BONUS: Accepts an HTTP PUT request at the same path (/products/{id}), containing
 
 - Oracle open JDK 14
 - Maven 3.8.1
-- ActiveMq 5.14
+- Axon 4.4
 - Junit 3
-- Spring boot 2.2.5 -multimodule
+- Spring boot 2.2.5
 - RestTemplate
 - Embedded Mongo DB 3.2.2
 - Swagger 2
 
-## Modules and description
-1. myRetail - main application that wraps all the modules
-2. common - holds common library for rest of the modules
-3. service - REST layer to serve the user request and publish in the queue
-4. construct - backend module that looks for the queue and constructs product information and loads/updates the database
-
-## Design description
-- Implements producer-> consumer approach
-- User requests for product details with product ID
-- Service assigns a unique identifier to each request and inserts into queue
-- service waits for the product to be loaded in database
-- construct consumes the request and consolidates the info with target url and loads the database
-- constuct notifies the service when loaded or error-ed
-- service serves the requests to the user
-
-## Technology used
-- Spring Batch
-- Spring scheduler
-- Multithreading concepts
-- producer-consumer
-- stateless communications
-- Oauth 2 security
-- Swagger
-
-## Project Status
-- Initial working cut from receiving the data from user to publishing it back with details
-- Unit test for few scenarios only
+## Design and Pattern
+This codebase describes a way of architecting highly scalable and available applications 
+that is based on microservices,event sourcing (ES) and command query responsibility segregation (CQRS). 
+Applications consist of loosely coupled components that communicate using events. 
+These components can be deployed either as separate services or packaged as a monolithic application for simplified development and testing.
 
 ## RoadMap
-
+- Separation of Command and Query services
 - Caching
 - Pagination
 - Resiliency
-- kafka /Blocking Queue wrapped on hashmap
-- DB sharding and scaling
+- kafka for inter service communication
+- DB sharding and scaling for distributed approach
 
 ## To run the application
 Download the project. Navigate to the myRetail project folder and run mvn spring-boot:run (RetailServiceApplication) Read the API documentation in Swagger2 (run http://localhost:8080/swagger-ui.html on the browser)
-
-## Screenshots
-![Alt text](.\images\LoadProduct.jpg)
-![Fetch Product](.\images\FetchProduct.jpg)
-![Update Product](.\images\UpdateProduct.jpg)

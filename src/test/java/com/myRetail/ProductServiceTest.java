@@ -8,10 +8,12 @@ import com.myRetail.service.impl.ProductFetchServiceImpl;
 import com.myRetail.service.impl.ProductUpdateServiceImpl;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
+import org.axonframework.messaging.Message;
 import org.axonframework.messaging.responsetypes.ResponseType;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.test.saga.FixtureConfiguration;
 import org.codehaus.jettison.json.JSONException;
+import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 public class ProductServiceTest {
@@ -66,6 +69,7 @@ public class ProductServiceTest {
         CommandGateway commandGateway = Mockito.mock(CommandGateway.class);
         EventStore eventStore = Mockito.mock(EventStore.class);
         fixture.registerResource(commandGateway);
+        fixture.registerResource(eventStore);
         productUpdateService = new ProductUpdateServiceImpl(commandGateway,eventStore);
 
         QueryGateway queryGateway = Mockito.mock(QueryGateway.class);
@@ -77,6 +81,10 @@ public class ProductServiceTest {
         CompletableFuture<Object> productIdCf = Mockito.mock(CompletableFuture.class);
         Mockito.when(productIdCf.get()).thenReturn(productId);
         Mockito.when(commandGateway.send(Mockito.any())).thenReturn(productIdCf);
+        Mockito.when(eventStore.readEvents(productId)
+                .asStream()
+                .map(Message::getPayload)
+                .collect(Collectors.toList()).size()).thenReturn(Integer.valueOf("0"));
 
         CompletableFuture<Object> productCf = Mockito.mock(CompletableFuture.class);
         Mockito.when(productCf.get()).thenReturn(product);
